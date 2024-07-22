@@ -41,15 +41,18 @@ class CSV:
         mask = (df['date'] >= start_date) & (df['date'] <= end_date)
         filtered_df = df.loc[mask]
 
+        print()
         if filtered_df.empty:
             print("No transactions found in the given range")
         else:
             print(f"Transactions found from {start_date} to {end_date}")
+            print()
             print(filtered_df.to_string(index=False, formatters={'date': lambda x: x.strftime(CSV.FORMAT)}))
 
             total_income = filtered_df[filtered_df['category'] == 'Income']['amount'].sum()
             total_expense = filtered_df[filtered_df['category'] == 'Expense']['amount'].sum()
 
+            print()
             print("Summary:")
             print(f"Total income: {total_income:.2f}")
             print(f"Total expense: {total_expense:.2f}")
@@ -70,5 +73,29 @@ def add():
     CSV.add_entry(date, amount, category, description)
 
 
-CSV.get_transactions("01-01-2020", "01-09-2024")
-add()
+def view_transactions():
+    start_date = get_date("Enter the start date (dd-mm-yyyy): ", allow_default=True)
+    end_date = get_date("Enter the end date (dd-mm-yyyy): ", allow_default=True)
+    df = CSV.get_transactions(start_date, end_date)
+
+
+def main():
+    while True:
+        print("\n1. Add a transaction")
+        print("2. View transactions and summary")
+        print("3. Exit")
+        choice = input("Enter your choice (1-3): ")
+
+        if choice == '1':
+            add()
+        elif choice == '2':
+            view_transactions()
+        elif choice == '3':
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice. Enter 1,2 or 3")
+
+
+if __name__ == '__main__':
+    main()
